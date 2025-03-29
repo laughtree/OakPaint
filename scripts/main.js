@@ -1,13 +1,15 @@
-let ringIndicatorHolding = false;
-let pickerIndicatorHolding = false;
-let color = "hsl(0, 100.00%, 76.30%)";
-let tool = "pen";
-let H = 0;
-let S = 0;
-let L = 0;
+class Palette {
+    constructor() {
+        this.ringIndicatorHolding = false;
+        this.pickerIndicatorHolding = false;
+        this.color = "hsl(0, 100.00%, 76.30%)";
+        this.H = 0;
+        this.S = 0;
+        this.L = 0;
+    }
 
-function ringUpdate(event) {
-    if (!ringIndicatorHolding) return;
+    ringUpdate(event) {
+    if (!this.ringIndicatorHolding) return;
     try {
         // get mouse position
         let x = event.clientX;
@@ -26,74 +28,76 @@ function ringUpdate(event) {
         // console.log("Rotate the indicator to angle:", angle); // debug
 
         // update hue
-        H = getHueByAngle(angle);
+        this.H = this.getHueByAngle(angle);
 
         // update color picker & color
-        pickerUpdate(event);
+        this.pickerUpdate(event);
     }
     catch (error) {
         console.error("Error updating color ring: ", error);
     }
 }
 
-function pickerUpdate(event) {
-    if (!pickerIndicatorHolding && !ringIndicatorHolding) return;
-    try {
-        //get mouse relative position in color picker
-        let rect = document.getElementById("color-picker").getBoundingClientRect();
-        let x = event.clientX - rect.left;
-        let y = event.clientY - rect.top;
+    pickerUpdate(event) {
+        if (!this.pickerIndicatorHolding && !this.ringIndicatorHolding) return;
+        try {
+            //get mouse relative position in color picker
+            let rect = document.getElementById("color-picker").getBoundingClientRect();
+            let x = event.clientX - rect.left;
+            let y = event.clientY - rect.top;
 
-        // update color picker indicator position
-        if(pickerIndicatorHolding){
-            let indicator = document.getElementById("color-picker-indicator");
-            let indicatorRect = indicator.getBoundingClientRect();
-            indicator.style = `left: ${Math.max(0, Math.min(rect.width, x)) - indicatorRect.width / 2}px; top: ${Math.max(0, Math.min(rect.height, y)) - indicatorRect.height / 2}px;`;
-            S = Math.round(Math.max(0, Math.min(100, (x / rect.width) * 100)));
-            L = Math.round(Math.max(0, Math.min(100, (1 - y / rect.height) * 50 * ((1 - x / rect.width) + 1))));
-            // console.log("Indicator moved to:", x, y); // debug
+            // update color picker indicator position
+            if(this.pickerIndicatorHolding){
+                let indicator = document.getElementById("color-picker-indicator");
+                let indicatorRect = indicator.getBoundingClientRect();
+                indicator.style = `left: ${Math.max(0, Math.min(rect.width, x)) - indicatorRect.width / 2}px; top: ${Math.max(0, Math.min(rect.height, y)) - indicatorRect.height / 2}px;`;
+                this.S = Math.round(Math.max(0, Math.min(100, (x / rect.width) * 100)));
+                this.L = Math.round(Math.max(0, Math.min(100, (1 - y / rect.height) * 50 * ((1 - x / rect.width) + 1))));
+                // console.log("Indicator moved to:", x, y); // debug
+            }
+
+            // update color picker background
+            document.getElementById("color-picker").style = `background:  -webkit-linear-gradient(270deg, white 0%, black 100%), -webkit-linear-gradient(0deg, white 0%, hsl(${this.H}, 100%, 50%) 100%);`
+
+            // update color
+            this.updateColor();
         }
-
-        // update color picker background
-        document.getElementById("color-picker").style = `background:  -webkit-linear-gradient(270deg, white 0%, black 100%), -webkit-linear-gradient(0deg, white 0%, hsl(${H}, 100%, 50%) 100%);`
-
-        // update color
-        updateColor();
+        catch (error) {
+            console.error("Error updating color picker:", error);
+        }
     }
-    catch (error) {
-        console.error("Error updating color picker:", error);
+
+    updateColor () {
+        try {
+            // change color to hsl format
+            this.color = `hsl(${this.H}, ${this.S}%, ${this.L}%)`;
+            document.getElementById("picked-color").style.backgroundColor = this.color;
+            // console.log("Picked color:", color); // debug
+        }
+        catch (error) {
+            console.error("Error updating color:", error);
+        }
+    }
+
+    setRingIndicatorHolding(value) {
+        this.ringIndicatorHolding = value;
+    }
+
+    setPickerIndicatorHolding(value) {
+        this.pickerIndicatorHolding = value;
+    }
+
+    getHueByAngle(angle) {
+        return angle % 360;
     }
 }
 
-function updateColor () {
-    try {
-        // change color to hsl format
-        color = `hsl(${H}, ${S}%, ${L}%)`;
-        document.getElementById("picked-color").style.backgroundColor = color;
-        // console.log("Picked color:", color); // debug
-    }
-    catch (error) {
-        console.error("Error updating color:", error);
-    }
-}
-
-function setRingIndicatorHolding(value) {
-    ringIndicatorHolding = value;
-}
-
-function setPickerIndicatorHolding(value) {
-    pickerIndicatorHolding = value;
-}
-
-function getHueByAngle(angle) {
-    return angle % 360;
-}
-
+const palette = new Palette();
 function pageInit() {
     let rect = document.getElementById("color-picker").getBoundingClientRect();
-    setPickerIndicatorHolding(true);
-    pickerUpdate({ clientX: rect.right, clientY: rect.bottom });
-    setPickerIndicatorHolding(false);
+    palette.setPickerIndicatorHolding(false);
+    palette.pickerUpdate({ clientX: rect.right, clientY: rect.bottom });
+    palette.setRingIndicatorHolding(false);
 }
 
 function toggleVisible(event) {
