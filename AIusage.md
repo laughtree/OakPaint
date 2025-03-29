@@ -1,7 +1,7 @@
 # AI Usage in this project
 ## Optimizing & Debug Assisting
 * Ask For Idea of Anti-aliasing
-* 
+
 
 
 ## Find Way to Implement Wanted Function

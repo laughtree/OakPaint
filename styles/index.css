@@ -249,3 +249,12 @@
 .control-btn:hover {
     transform: scale(1.1);
 }
+
+#cursor-icon {
+    width: 24px;
+    height: 24px;
+}
+
+#cursor {
+    position: absolute;
+}

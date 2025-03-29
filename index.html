@@ -7,16 +7,16 @@
     </head>
     <body onload="pageInit();" onmouseup="event.stopPropagation();palette.setRingIndicatorHolding(false);palette.setPickerIndicatorHolding(false);canvas.stopDraw(event);">
         <div class="container" id="background">
-        <div class="container" id="workspace" onmouseup="event.stopPropagation();palette.setRingIndicatorHolding(false);palette.setPickerIndicatorHolding(false);canvas.stopDraw(event);" onmousemove="event.stopPropagation();" onmouseleave="event.stopPropagation();canvas.hideBrush();">
+        <div class="container" id="workspace" onmouseup="event.stopPropagation();palette.setRingIndicatorHolding(false);palette.setPickerIndicatorHolding(false);canvas.stopDraw(event);" onmousemove="event.stopPropagation();" onmouseleave="event.stopPropagation();canvas.hideBrush();" draggable="false">
             <div class="container" id="views">
 
             </div>
             <div class="container" id="board" onmousedown="event.stopPropagation();canvas.startDraw(event);" onmouseup="canvas.stopDraw(event);" onmousemove="event.stopPropagation();canvas.draw(event);canvas.updateBrush(event);" draggable="false" onmouseenter="event.stopPropagation();canvas.showBrush();" onmouseleave="canvas.hideBrush()" onmouseout="event.stopPropagation();canvas.hideBrush();">
                 <canvas id="paper"></canvas>
-                <canvas class="layer" id="canvas-layer0"></canvas>
-                <canvas class="layer" id="canvas-preview"></canvas>
-                <canvas class="" id="brush"></canvas>
-                <canvas class="" id="cursor" width="16px" height="16px"></canvas>
+                <canvas class="layer" id="canvas-layer0" draggable="false"></canvas>
+                <canvas class="layer" id="canvas-preview" draggable="false"></canvas>
+                <canvas class="" id="brush" draggable="false"></canvas>
+                <div id="cursor"><img id="cursor-icon" src="images/pen.svg" alt="cursor" draggable="false"></div>
             </div>
             <div class="container" id="toolbar" onmouseenter="event.stopPropagation();canvas.hideBrush();">
                 <div class="container" id="control-panel">
@@ -64,6 +64,9 @@
                     </div>
                     <div class="tool">
                         <img src="images/circle.svg" alt="circle" id="circle" onclick="event.stopPropagation();canvas.setTool('circle');">
+                    </div>
+                    <div class="tool">
+                        <img src="images/triangle.svg" alt="triangle" id="triangle" onclick="event.stopPropagation();canvas.setTool('triangle');">
                     </div>
                 </div>
                 <div class="container" id="tool-setting">

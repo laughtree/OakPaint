@@ -164,9 +164,7 @@ class Canvas {
         }
         this.tool = tool;
 
-        let cursorCTX = this.cursor.getContext("2d");
-        cursorCTX.clearRect(0, 0, this.cursor.width, this.cursor.height);
-        cursorCTX.drawImage(document.getElementById(tool), 0, 0, this.cursor.width, this.cursor.height);
+        this.cursor.children[0].src = "images/" + tool + ".svg";
     }
 
     toggleVisible(event) {
@@ -201,6 +199,7 @@ class Canvas {
         switch(this.tool) {
             case "rectangle":
             case "circle":
+            case "triangle":
                 this.ctx.drawImage(this.preview, 0, 0, this.preview.width, this.preview.height);
                 this.previewCtx.clearRect(0, 0, this.preview.width, this.preview.height);
                 break;
@@ -229,7 +228,7 @@ class Canvas {
         this.brush.style.height = this.brushSize + "px";
 
         this.cursor.style.left = event.clientX + this.brushSize + "px";
-        this.cursor.style.top = event.clientY - this.brushSize + "px";
+        this.cursor.style.top = event.clientY - 2 * this.brushSize + "px";
     }
 
     clear() {
@@ -248,15 +247,19 @@ class Canvas {
             this.Y = event.clientY - this.canvas.getBoundingClientRect().top;
             switch(this.tool) {
                 case "pen":
-                    this.ctx.lineWidth = this.brushSize;
+                    this.ctx.lineWidth = this.brushSize * 0.85;
                     this.ctx.strokeStyle = this.color;
                     this.ctx.lineCap = "round";
                     this.ctx.lineJoin = "round";
                     this.ctx.shadowColor = this.color;
-                    this.ctx.shadowBlur = 2;
-                    this.ctx.quadraticCurveTo(this.lastX, this.lastY, this.X, this.Y);
+                    this.ctx.shadowBlur = this.brushSize * 0.15;
+                    let middleX = (this.lastX + this.X) / 2;
+                    let middleY = (this.lastY + this.Y) / 2;
+                    this.ctx.quadraticCurveTo(this.lastX, this.lastY, middleX, middleY);
+                    this.ctx.quadraticCurveTo(middleX, middleY, this.X, this.Y);
                     this.ctx.stroke();
                     this.ctx.moveTo(this.X, this.Y);
+                    this.ctx.globalCompositeOperation = "source-over";
                     // console.log("Drawing with pen at " + event.clientX + ", " + event.clientY + " with color " + this.ctx.strokeStyle); // debug
                     break;
                 case "eraser":
@@ -278,6 +281,7 @@ class Canvas {
                     this.previewCtx.lineWidth = this.brushSize;
                     this.previewCtx.strokeRect(this.startX, this.startY, this.X - this.startX, this.Y - this.startY);
                     this.previewCtx.stroke();
+                    this.ctx.globalCompositeOperation = "source-over";
                     break;
                 case "circle":
                     this.previewCtx.clearRect(0, 0, this.preview.width, this.preview.height);
@@ -290,6 +294,23 @@ class Canvas {
                     let x = this.X > this.startX ? this.startX + a : this.X + a;
                     let y = this.Y > this.startY ? this.startY + b : this.Y + b;
                     this.previewCtx.ellipse(x, y, a, b, 0, 0, Math.PI * 2);
+                    this.previewCtx.stroke();
+                    this.ctx.globalCompositeOperation = "source-over";
+                    break;
+                case "triangle":
+                    let peakX = (this.startX + this.X) / 2;
+                    let peakY = this.Y;
+                    this.previewCtx.clearRect(0, 0, this.preview.width, this.preview.height);
+                    this.resize();
+                    // I dont know why bu clearRect had no effect so I use a useless resize to clear the preview
+                    this.previewCtx.strokeStyle = this.color;
+                    this.previewCtx.lineWidth = this.brushSize;
+                    this.previewCtx.moveTo(this.startX, this.startY);
+                    this.previewCtx.lineTo(peakX, peakY);
+                    this.previewCtx.moveTo(peakX, peakY);
+                    this.previewCtx.lineTo(this.X, this.startY);
+                    this.previewCtx.moveTo(this.X, this.startY);
+                    this.previewCtx.lineTo(this.startX, this.startY);
                     this.previewCtx.stroke();
                     break;
                 default:
