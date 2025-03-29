@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>OakPaint</title>
+        <link rel="stylesheet" type="text/css" href="styles/index.css">
+        <script src="scripts/main.js"></script>
+    </head>
+    <body onload="pageInit();">
+        <canvas id="background"></canvas>
+        <div class="container" id="workspace" onmouseup="event.stopPropagation();setRingIndicatorHolding(false);setPickerIndicatorHolding(false);" onmousemove="event.stopPropagation();">
+            <div class="container" id="views">
+
+            </div>
+            <div class="container" id="board">
+                <canvas id="board-area"></canvas>
+            </div>
+            <div class="container" id="toolbar">
+                <div class="palatte-area" id="palatte" onmousemove="event.stopPropagation();ringUpdate(event);" draggable="false">
+                    <div class="palatte-area" id="color-ring" onmousedown="event.stopPropagation();setRingIndicatorHolding(true);" onmouseup="setRingIndicatorHolding(false);">
+                        <div class="palatte-area" id="color-ring-indicator">
+                            <div class="palatte-area" id="color-ring-indicator-head"></div>
+                            <div class="palatte-area" id="color-ring-indicator-tail" onmousedown="event.stopPropagation();" onmouseup="event.stopPropagation();"></div>
+                        </div>
+                        <div class="palatte-area" id="color-ring-mask">
+                            <div class="" id="color-picker" onmousedown="event.stopPropagation();setPickerIndicatorHolding(true);" onmouseup="setPickerIndicatorHolding(false);" onmousemove="event.stopPropagation();pickerUpdate(event);">
+                                <div class="palatte-area" id="color-picker-indicator"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container" id="colors">
+                    <div class="color-chart" id="picked-color" draggable="true"></div>
+                </div>
+            </div>
+            
+        </div>
+    </body>
+</html>
