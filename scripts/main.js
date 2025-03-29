@@ -72,11 +72,12 @@ class Palette {
             // change color to hsl format
             this.color = `hsl(${this.H}, ${this.S}%, ${this.L}%)`;
             document.getElementById("picked-color").style.backgroundColor = this.color;
-            // console.log("Picked color:", color); // debug
+            // console.log("Picked color:", this.color); // debug
         }
         catch (error) {
             console.error("Error updating color:", error);
         }
+        canvas.setColor(this.color);
     }
 
     setRingIndicatorHolding(value) {
@@ -92,43 +93,283 @@ class Palette {
     }
 }
 
-const palette = new Palette();
-function pageInit() {
-    let rect = document.getElementById("color-picker").getBoundingClientRect();
-    palette.setPickerIndicatorHolding(false);
-    palette.pickerUpdate({ clientX: rect.right, clientY: rect.bottom });
-    palette.setRingIndicatorHolding(false);
-}
+class Canvas {
+    constructor() {
+        this.tool = "pen";
+        this.canvas = null;
+        this.preview = null;
+        this.brush = null;
+        this.ctx = null;
+        this.previewCtx = null;
+        this.color = "hsl(0, 0%, 0%)";
+        this.brushSize = 5;
+        this.drawing = false;
+        this.startX = 0;
+        this.startY = 0;
+        this.lastX = 0;
+        this.lastY = 0;
+        this.X = 0;
+        this.Y = 0;
+        this.Opacity = 1;
+        this.cursor = null;
+    }
 
-function toggleVisible(event) {
-    // get layer name from event target id
-    let targetLayer = event.target.parentElement.parentElement.id.split("-")[0];
-    //console.log("Toggling visibility of layer:", targetLayer); // debug
+    setCanvas(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext("2d");
+        this.setBrushSize(this.brushSize);
+        this.setColor(this.color);
+        this.brush = document.getElementById("brush");
+        this.cursor = document.getElementById("cursor");
+        this.preview = document.getElementById("canvas-preview");
+        this.previewCtx = this.preview.getContext("2d");
+    }
 
-    // get layer object
-    let targetLayerObject = document.getElementById(targetLayer);
+    setColor(color) {
+        if(color.includes("hsla")) {
+            let H, S, L, A;
+            color.substring(5, color.length - 1).split(", ").forEach((value, index) => {
+                if(index == 0) H = value;
+                else if(index == 1) S = value;
+                else if(index == 2) L = value;
+                else if(index == 3) A = value;
+            });
+            this.color = `hsla(${H}, ${S}, ${L}, ${this.Opacity})`;
+        }
+        else {
+            this.color = "hsla" + color.substring(3, color.length - 1) + `, ${this.Opacity})`;
+        }
+        this.ctx.strokeStyle = this.color;
+        this.ctx.fillStyle = this.color;
+        console.log("Canvas color set to:", this.color); // debug
+    }
 
-    // toggle visibility
-    targetLayerObject.style.visibility = targetLayerObject.style.visibility == "hidden" ? "visible" : "hidden";
+    setBrushSize(size) {
+        this.brushSize = size;
+        this.ctx.lineWidth = size;
+        // console.log("Canvas brush size set to:", this.brushSize); // debug
+    }
 
-    // change button icon
-    event.target.src = targetLayerObject.style.visibility == "hidden" ? "images/view.svg" : "images/view--filled.svg";
-}
+    setOpacity(opacity) {
+        this.Opacity = opacity;
+        this.setColor(this.color);
+        // console.log("Canvas opacity set to:", this.Opacity); // debug
+    }
 
-function draw(event) {
-    try {
-        switch(tool) {
-            case "pen":
-                // Draw with pen tool
-                break;
-            case "eraser":
-                // Erase with eraser tool
+    setTool(tool) {
+        let tools = document.getElementsByClassName("tool");
+        // console.log("tools : ", tools); // debug
+        for (let i = 0; i < tools.length; i++) {
+            tools[i].children[0].src = ("images/" + tools[i].children[0].id + (tool == tools[i].children[0].id ? "-using.svg" : ".svg"));
+        }
+        this.tool = tool;
+
+        let cursorCTX = this.cursor.getContext("2d");
+        cursorCTX.clearRect(0, 0, this.cursor.width, this.cursor.height);
+        cursorCTX.drawImage(document.getElementById(tool), 0, 0, this.cursor.width, this.cursor.height);
+    }
+
+    toggleVisible(event) {
+        // get layer name from event target id
+        let targetLayer = event.target.parentElement.parentElement.id.split("-")[0];
+        //console.log("Toggling visibility of layer:", targetLayer); // debug
+    
+        // get layer object
+        let targetLayerObject = document.getElementById(targetLayer);
+    
+        // toggle visibility
+        targetLayerObject.style.visibility = targetLayerObject.style.visibility == "hidden" ? "visible" : "hidden";
+    
+        // change button icon
+        event.target.src = targetLayerObject.style.visibility == "hidden" ? "images/view.svg" : "images/view--filled.svg";
+    }
+
+    startDraw(event) {
+        this.drawing = true;
+        this.ctx.beginPath();
+        this.startX = event.clientX - this.canvas.getBoundingClientRect().left;
+        this.startY = event.clientY - this.canvas.getBoundingClientRect().top;
+        this.X = this.startX;
+        this.Y = this.startY;
+        this.ctx.moveTo(this.startX, this.startY);
+        // console.log("Start drawing at:", this.startX, this.startY); // debug
+    }
+    
+    stopDraw(event) {
+        this.drawing = false;
+        this.ctx.closePath();
+        switch(this.tool) {
+            case "rectangle":
+            case "circle":
+                this.ctx.drawImage(this.preview, 0, 0, this.preview.width, this.preview.height);
+                this.previewCtx.clearRect(0, 0, this.preview.width, this.preview.height);
                 break;
             default:
-                console.error("Unknown tool:", tool);
+                break;
+        }
+
+        // console.log("Stop drawing at:", this.X, this.Y); // debug
+    }
+
+    showBrush() {
+        this.brush.style.display = "block";
+        this.cursor.style.display = "block";
+    }
+
+    hideBrush() {
+        this.brush.style.display = "none";
+        this.cursor.style.display = "none";
+    }
+
+    updateBrush(event) {
+        this.showBrush();
+        this.brush.style.left = event.clientX - this.brushSize / 2 + "px";
+        this.brush.style.top = event.clientY - this.brushSize / 2 + "px";
+        this.brush.style.width = this.brushSize + "px";
+        this.brush.style.height = this.brushSize + "px";
+
+        this.cursor.style.left = event.clientX + this.brushSize + "px";
+        this.cursor.style.top = event.clientY - this.brushSize + "px";
+    }
+
+    clear() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.previewCtx.clearRect(0, 0, this.preview.width, this.preview.height);
+        this.resize(); // I dont know why bu clearRect had no effect to ellipse so I use a useless resize to clear the preview
+        console.log("Canvas cleared"); // debug
+    }
+
+    draw(event) {
+        if(!this.drawing) return;
+        try {
+            this.lastX = this.X;
+            this.lastY = this.Y;
+            this.X = event.clientX - this.canvas.getBoundingClientRect().left;
+            this.Y = event.clientY - this.canvas.getBoundingClientRect().top;
+            switch(this.tool) {
+                case "pen":
+                    this.ctx.lineWidth = this.brushSize;
+                    this.ctx.strokeStyle = this.color;
+                    this.ctx.lineCap = "round";
+                    this.ctx.lineJoin = "round";
+                    this.ctx.shadowColor = this.color;
+                    this.ctx.shadowBlur = 2;
+                    this.ctx.quadraticCurveTo(this.lastX, this.lastY, this.X, this.Y);
+                    this.ctx.stroke();
+                    this.ctx.moveTo(this.X, this.Y);
+                    // console.log("Drawing with pen at " + event.clientX + ", " + event.clientY + " with color " + this.ctx.strokeStyle); // debug
+                    break;
+                case "eraser":
+                    this.ctx.lineWidth = this.brushSize;
+                    this.ctx.strokeStyle = this.color;
+                    this.ctx.lineCap = "round";
+                    this.ctx.lineJoin = "round";
+                    this.ctx.shadowColor = this.color;
+                    this.ctx.shadowBlur = 2;
+                    this.ctx.quadraticCurveTo(this.lastX, this.lastY, this.X, this.Y);
+                    this.ctx.stroke();
+                    this.ctx.moveTo(this.X, this.Y);
+                    this.ctx.globalCompositeOperation = "destination-out";
+                    // console.log("Erasing at " + event.clientX + ", " + event.clientY + " with color " + this.ctx.strokeStyle); // debug
+                    break;
+                case "rectangle":
+                    this.previewCtx.clearRect(0, 0, this.preview.width, this.preview.height);
+                    this.previewCtx.strokeStyle = this.color;
+                    this.previewCtx.lineWidth = this.brushSize;
+                    this.previewCtx.strokeRect(this.startX, this.startY, this.X - this.startX, this.Y - this.startY);
+                    this.previewCtx.stroke();
+                    break;
+                case "circle":
+                    this.previewCtx.clearRect(0, 0, this.preview.width, this.preview.height);
+                    this.resize();
+                    // I dont know why bu clearRect had no effect so I use a useless resize to clear the preview
+                    this.previewCtx.strokeStyle = this.color;
+                    this.previewCtx.lineWidth = this.brushSize;
+                    let a = Math.abs(this.X - this.startX) / 2;
+                    let b = Math.abs(this.Y - this.startY) / 2;
+                    let x = this.X > this.startX ? this.startX + a : this.X + a;
+                    let y = this.Y > this.startY ? this.startY + b : this.Y + b;
+                    this.previewCtx.ellipse(x, y, a, b, 0, 0, Math.PI * 2);
+                    this.previewCtx.stroke();
+                    break;
+                default:
+                    console.error("Unknown tool:", tool);
+            }
+        }
+        catch (error) {
+            console.error("Error drawing:", error);
         }
     }
-    catch (error) {
-        console.error("Error drawing:", error);
+
+    resize() {
+        // console.log("Backup content"); // debug
+        // console.log("Canvas size: ", this.canvas.width, this.canvas.height); // debug
+        let tempCanvas = document.createElement("canvas");
+        tempCanvas.width = this.canvas.width;
+        tempCanvas.height = this.canvas.height;
+        let tempCtx = tempCanvas.getContext("2d");
+        tempCtx.drawImage(this.canvas, 0, 0);
+
+        // console.log("Resizing canvas"); // debug
+        let paper = document.getElementById("paper");
+        this.canvas.style.left = paper.getBoundingClientRect().left + "px";
+        this.canvas.style.top = paper.getBoundingClientRect().top + "px";
+        this.canvas.style.width = paper.getBoundingClientRect().width + "px";
+        this.canvas.style.height = paper.getBoundingClientRect().height + "px";
+        this.canvas.width = paper.getBoundingClientRect().width;
+        this.canvas.height = paper.getBoundingClientRect().height;
+
+        // console.log("Resize preview"); // debug
+        this.preview.style.left = paper.getBoundingClientRect().left + "px";
+        this.preview.style.top = paper.getBoundingClientRect().top + "px";
+        this.preview.style.width = paper.getBoundingClientRect().width + "px";
+        this.preview.style.height = paper.getBoundingClientRect().height + "px";
+        this.preview.width = paper.getBoundingClientRect().width;
+        this.preview.height = paper.getBoundingClientRect().height;
+
+        // console.log("Resume content"); // debug
+        this.ctx.drawImage(tempCanvas, 0, 0);
+
     }
+
+    download() {
+
+    }
+
+    test() {
+        this.ctx.fillRect(0, 0, 100, 100);
+    }
+}
+
+const palette = new Palette();
+const canvas = new Canvas();
+function pageInit() {
+    let rect = document.getElementById("color-picker").getBoundingClientRect();
+    canvas.setCanvas(document.getElementById("canvas-layer0"));
+
+    palette.setPickerIndicatorHolding(true);
+    palette.pickerUpdate({ clientX: rect.right, clientY: rect.bottom });
+    palette.setPickerIndicatorHolding(false);
+    
+    canvas.setTool("pen");
+    canvas.setColor(palette.color);
+    canvas.setBrushSize(5);
+    let paperRect = document.getElementById("paper").getBoundingClientRect();
+    canvas.canvas.style.left = paperRect.left + "px";
+    canvas.canvas.style.top = paperRect.top + "px";
+    canvas.canvas.width = paperRect.width;
+    canvas.canvas.height = paperRect.height;
+    canvas.canvas.style.width = paperRect.width + "px";
+    canvas.canvas.style.height = paperRect.height + "px";
+
+    canvas.preview.style.left = paperRect.left + "px";
+    canvas.preview.style.top = paperRect.top + "px";
+    canvas.preview.width = paperRect.width;
+    canvas.preview.height = paperRect.height;
+    canvas.preview.style.width = paperRect.width + "px";
+    canvas.preview.style.height = paperRect.height + "px";
+
+    window.addEventListener("resize", () => {
+        canvas.resize();
+    });
 }

@@ -5,26 +5,46 @@
         <link rel="stylesheet" type="text/css" href="styles/index.css">
         <script src="scripts/main.js"></script>
     </head>
-    <body onload="pageInit();">
+    <body onload="pageInit();" onmouseup="event.stopPropagation();palette.setRingIndicatorHolding(false);palette.setPickerIndicatorHolding(false);canvas.stopDraw(event);">
         <div class="container" id="background">
-        <div class="container" id="workspace" onmouseup="event.stopPropagation();palette.setRingIndicatorHolding(false);palette.setPickerIndicatorHolding(false);" onmousemove="event.stopPropagation();">
+        <div class="container" id="workspace" onmouseup="event.stopPropagation();palette.setRingIndicatorHolding(false);palette.setPickerIndicatorHolding(false);canvas.stopDraw(event);" onmousemove="event.stopPropagation();" onmouseleave="event.stopPropagation();canvas.hideBrush();">
             <div class="container" id="views">
 
             </div>
-            <div class="container" id="board">
+            <div class="container" id="board" onmousedown="event.stopPropagation();canvas.startDraw(event);" onmouseup="canvas.stopDraw(event);" onmousemove="event.stopPropagation();canvas.draw(event);canvas.updateBrush(event);" draggable="false" onmouseenter="event.stopPropagation();canvas.showBrush();" onmouseleave="canvas.hideBrush()" onmouseout="event.stopPropagation();canvas.hideBrush();">
                 <canvas id="paper"></canvas>
                 <canvas class="layer" id="canvas-layer0"></canvas>
+                <canvas class="layer" id="canvas-preview"></canvas>
+                <canvas class="" id="brush"></canvas>
+                <canvas class="" id="cursor" width="16px" height="16px"></canvas>
             </div>
-            <div class="container" id="toolbar">
-                <div class="palatte-area" id="palatte" onmousemove="event.stopPropagation();palette.ringUpdate(event);" draggable="false">
-                    <div class="palatte-area" id="color-ring" onmousedown="event.stopPropagation();palette.setRingIndicatorHolding(true);" onmouseup="palette.setRingIndicatorHolding(false);">
-                        <div class="palatte-area" id="color-ring-indicator">
-                            <div class="palatte-area" id="color-ring-indicator-head"></div>
-                            <div class="palatte-area" id="color-ring-indicator-tail" onmousedown="event.stopPropagation();" onmouseup="event.stopPropagation();"></div>
+            <div class="container" id="toolbar" onmouseenter="event.stopPropagation();canvas.hideBrush();">
+                <div class="container" id="control-panel">
+                    <div class="container control-btn" id="undo">
+                        <img src="images/undo.svg" alt="undo" id="undo-button" onclick="event.stopPropagation();canvas.undo();">
+                    </div>
+                    <div class="container control-btn" id="redo">
+                        <img src="images/redo.svg" alt="redo" id="redo-button" onclick="event.stopPropagation();canvas.redo();">
+                    </div>
+                    <div class="dummy" style="width: 32px;height: 32px;"></div>
+                    <div class="container control-btn" id="download">
+                        <img src="images/download.svg" alt="download" id="download-button" onclick="event.stopPropagation();canvas.download();">
+                    </div>
+                    <div class="dummy" style="width: 32px;height: 32px;"></div>
+                    <div class="dummy" style="width: 16px;height: 32px;"></div>
+                    <div class="container control-btn" id="clear">
+                        <img src="images/clear.svg" alt="clear" id="clear-button" onclick="event.stopPropagation();canvas.clear();">
+                    </div>
+                </div>
+                <div class="palette-area" id="palette" onmousemove="event.stopPropagation();palette.ringUpdate(event);" draggable="false">
+                    <div class="palette-area" id="color-ring" onmousedown="event.stopPropagation();palette.setRingIndicatorHolding(true);" onmouseup="palette.setRingIndicatorHolding(false);">
+                        <div class="palette-area" id="color-ring-indicator">
+                            <div class="palette-area" id="color-ring-indicator-head"></div>
+                            <div class="palette-area" id="color-ring-indicator-tail" onmousedown="event.stopPropagation();" onmouseup="event.stopPropagation();"></div>
                         </div>
-                        <div class="palatte-area" id="color-ring-mask">
+                        <div class="palette-area" id="color-ring-mask">
                             <div class="" id="color-picker" onmousedown="event.stopPropagation();palette.setPickerIndicatorHolding(true);" onmouseup="palette.setPickerIndicatorHolding(false);" onmousemove="event.stopPropagation();palette.pickerUpdate(event);">
-                                <div class="palatte-area" id="color-picker-indicator"></div>
+                                <div class="palette-area" id="color-picker-indicator"></div>
                             </div>
                         </div>
                     </div>
@@ -33,12 +53,33 @@
                     <div class="color-chart" id="picked-color" draggable="true"></div>
                 </div>
                 <div class="container" id="tools">
-
+                    <div class="tool">
+                        <img src="images/pen.svg" alt="pen" id="pen" onclick="event.stopPropagation();canvas.setTool('pen');">
+                    </div>
+                    <div class="tool">
+                        <img src="images/eraser.svg" alt="eraser" id="eraser" onclick="event.stopPropagation();canvas.setTool('eraser');">
+                    </div>
+                    <div class="tool">
+                        <img src="images/rectangle.svg" alt="rectangle" id="rectangle" onclick="event.stopPropagation();canvas.setTool('rectangle');">
+                    </div>
+                    <div class="tool">
+                        <img src="images/circle.svg" alt="circle" id="circle" onclick="event.stopPropagation();canvas.setTool('circle');">
+                    </div>
+                </div>
+                <div class="container" id="tool-setting">
+                    <div class="container" id="brush-size">
+                        <div class="container" id="brush-size-indicator"></div>
+                        <input type="range" id="brush-size-range" min="1" max="100" value="5" oninput="event.stopPropagation();canvas.setBrushSize(value);">
+                    </div>
+                    <div class="container" id="opacity">
+                        <div class="container" id="opacity-indicator"></div>
+                        <input type="range" id="opacity-range" min="0" max="100" value="100" oninput="event.stopPropagation();canvas.setOpacity(value / 100);">
+                    </div>
                 </div>
                 <div class="container" id="layer-list">
                     <div class="layer-list-object container" id="paper-layer">
                         <div class="visible-button">
-                            <img src="images/view--filled.svg" alt="visible" onclick="event.stopPropagation();toggleVisible(event);">
+                            <img src="images/view--filled.svg" alt="visible" onclick="event.stopPropagation();canvas.toggleVisible(event);">
                         </div>
                         <div class="container layer-name"><span>Paper</span></div>
                     </div>
