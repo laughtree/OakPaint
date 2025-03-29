@@ -1,6 +1,7 @@
 let ringIndicatorHolding = false;
 let pickerIndicatorHolding = false;
 let color = "hsl(0, 100.00%, 76.30%)";
+let tool = "pen";
 let H = 0;
 let S = 0;
 let L = 0;
@@ -95,3 +96,35 @@ function pageInit() {
     setPickerIndicatorHolding(false);
 }
 
+function toggleVisible(event) {
+    // get layer name from event target id
+    let targetLayer = event.target.parentElement.parentElement.id.split("-")[0];
+    //console.log("Toggling visibility of layer:", targetLayer); // debug
+
+    // get layer object
+    let targetLayerObject = document.getElementById(targetLayer);
+
+    // toggle visibility
+    targetLayerObject.style.visibility = targetLayerObject.style.visibility == "hidden" ? "visible" : "hidden";
+
+    // change button icon
+    event.target.src = targetLayerObject.style.visibility == "hidden" ? "images/view.svg" : "images/view--filled.svg";
+}
+
+function draw(event) {
+    try {
+        switch(tool) {
+            case "pen":
+                // Draw with pen tool
+                break;
+            case "eraser":
+                // Erase with eraser tool
+                break;
+            default:
+                console.error("Unknown tool:", tool);
+        }
+    }
+    catch (error) {
+        console.error("Error drawing:", error);
+    }
+}

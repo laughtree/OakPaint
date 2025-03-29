@@ -18,17 +18,29 @@
 }
 
 #board {
-    width: 100%;
-    height: 100%;
+    width: 90vw;
+    height: 90;
+    background-image: repeating-conic-gradient(lightgray 0 25%, white 0 50%);
+    background-size: 5vh 5vh;
 }
 
-#board-area{
+#paper{
     top: 0;
     left: 0;
     z-index: 1;
     width: 100%;
     height: 100%;
     background: white;
+}
+
+.layer{
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background: transparent;
 }
 
 #background{
@@ -76,7 +88,7 @@
 }
 
 #color-picker:hover{
-    cursor: pointer;
+    cursor: crosshair;
 }
 
 #color-ring {
@@ -145,9 +157,48 @@
     height: 5vh;
     width: 5vh;
     background-color: transparent;
-    border-width: 1px;
+    border-width: 3px;
     border-style: solid;
     border-color: #795548;
     z-index: 1;
     align-self: center;
+}
+
+#picked-color:hover{
+    cursor: pointer;
+}
+
+.visible-button{
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    margin: 0;
+
+    background-color: transparent;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #795548;
+    z-index: 1;
+}
+
+.layer-list-object{
+    width: 25vh;
+    height: 5vh;
+    background-color: transparent;
+    border-width: 3px;
+    border-style: solid;
+    border-color: #795548;
+    z-index: 1;
+    flex-direction: row;
+}
+
+.layer-name {
+    width: 10vh;
+    height: 5vh;
+    background-color: transparent;
+    z-index: 1;
+    flex-direction: row;
+    row-gap: 2vh;
+    flex-direction: column;
+    align-items: flex-start;
 }
