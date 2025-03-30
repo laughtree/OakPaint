@@ -102,7 +102,7 @@ class Canvas {
         this.ctx = null;
         this.previewCtx = null;
         this.color = "hsl(0, 0%, 0%)";
-        this.brushSize = 50;
+        this.brushSize = 10;
         this.drawing = false;
         this.startX = 0;
         this.startY = 0;
@@ -114,6 +114,8 @@ class Canvas {
         this.cursor = null;
         this.listeningText = false;
         this.text = null;
+        this.history = [];
+        this.historyIdx = 0;
     }
 
     setCanvas(canvas) {
@@ -127,6 +129,7 @@ class Canvas {
         this.setColor(this.color);
         this.ctx.font = "20px Arial";
         this.ctx.textAlign = "left";
+        this.history[this.historyIdx++] = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
     }
 
     setColor(color) {
@@ -193,6 +196,8 @@ class Canvas {
     }
 
     startDraw(event) {
+        // console.log(this.history) // debug
+        this.historyIdx++;
         this.drawing = true;
         this.ctx.beginPath();
         this.startX = Number(event.clientX) - this.canvas.getBoundingClientRect().left;
@@ -208,6 +213,7 @@ class Canvas {
     }
     
     stopDraw(event) {
+        if(!this.drawing) return;
         this.drawing = false;
         this.ctx.closePath();
         switch(this.tool) {
@@ -220,7 +226,7 @@ class Canvas {
             default:
                 break;
         }
-
+        this.history[this.historyIdx] = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
         // console.log("Stop drawing at:", this.X, this.Y); // debug
     }
 
@@ -294,6 +300,24 @@ class Canvas {
         this.cursor.style.left = (Number(event.clientX) + this.brushSize) + "px";
         this.cursor.style.top = (Number(event.clientY) - 2 * this.brushSize) + "px";
         // console.log(this.brushSize, event.clientX, (Number(event.clientX) + this.brushSize)); // debug
+    }
+
+    undo() {
+        console.log("undo at history idx= " + this.historyIdx); // debug
+        console.log("target: " + this.history[this.historyIdx - 1]); // debug
+        if(this.historyIdx > 1) {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.ctx.putImageData(this.history[--this.historyIdx], 0, 0);
+        }
+    }
+
+    redo(){
+        console.log("redo at history idx= " + this.historyIdx); // debug
+        console.log("target: " + this.history[this.historyIdx + 1]); // debug
+        if(this.historyIdx < this.history.length - 1) {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.heigh);
+            this.ctx.putImageData(this.history[++this.historyIdx], 0, 0);
+        }
     }
 
     clear() {
@@ -418,6 +442,9 @@ class Canvas {
         // console.log("Resume content"); // debug
         this.ctx.drawImage(tempCanvas, 0, 0);
 
+        this.history = [];
+        this.historyIdx = 0;
+        this.history[this.historyIdx++] = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
     }
 
     download() {
@@ -441,7 +468,7 @@ function pageInit() {
     
     canvas.setTool("pen");
     canvas.setColor(palette.color);
-    canvas.setBrushSize(50);
+    canvas.setBrushSize(10);
     let paperRect = document.getElementById("paper").getBoundingClientRect();
     canvas.canvas.style.left = paperRect.left + "px";
     canvas.canvas.style.top = paperRect.top + "px";

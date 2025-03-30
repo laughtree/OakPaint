@@ -14,7 +14,7 @@
 | **Advanced tools**     | **Score** | **Check** |
 | :--------------------- | :-------: | :-------: |
 | Different brush shapes |    15%    |     Y     |
-| Un/Re-do button        |    10%    |     N     |
+| Un/Re-do button        |    10%    |     Y     |
 | Image tool             |    5%     |     N     |
 | Download               |    5%     |     N     |
 
