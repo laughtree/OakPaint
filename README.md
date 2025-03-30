@@ -21,6 +21,7 @@
 | **Other useful widgets** | **Score** | **Check** |
 | :----------------------- | :-------: | :-------: |
 | Visible Switch of Paper  |   1~5%    |     Y     |
+| Color History            |           |           |
 
 
 ---
