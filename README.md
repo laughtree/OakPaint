@@ -7,7 +7,7 @@
 | **Basic components** | **Score** | **Check** |
 | :------------------- | :-------: | :-------: |
 | Basic control tools  |    30%    |     Y     |
-| Text input           |    10%    |     N     |
+| Text input           |    10%    |     Y     |
 | Cursor icon          |    10%    |     Y     |
 | Refresh button       |    5%     |     Y     |
 
@@ -20,7 +20,7 @@
 
 | **Other useful widgets** | **Score** | **Check** |
 | :----------------------- | :-------: | :-------: |
-| Visible Switch of Paper  |   1~5%    |     N     |
+| Visible Switch of Paper  |   1~5%    |     Y     |
 
 
 ---
