@@ -31,7 +31,7 @@
     left: 0;
     background: transparent;
     display: none;
-    z-index: 5;
+    z-index: 500;
     display: block;
     border: gray;
     border-width: 1px;
@@ -42,7 +42,7 @@
 
 #cursor {
     position: absolute;
-    z-index: 5;
+    z-index: 500;
 }
 
 #paper{
@@ -254,6 +254,7 @@
 #cursor-icon {
     width: 24px;
     height: 24px;
+    z-index: 500;
 }
 
 #cursor {

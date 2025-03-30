@@ -250,21 +250,6 @@ class Canvas {
         this.previewCtx.clearRect(0, 0, this.preview.width, this.preview.height);
     }
 
-    toggleVisible(event) {
-        // get layer name from event target id
-        let targetLayer = event.target.parentElement.parentElement.id.split("-")[0];
-        //console.log("Toggling visibility of layer:", targetLayer); // debug
-    
-        // get layer object
-        let targetLayerObject = document.getElementById(targetLayer);
-    
-        // toggle visibility
-        targetLayerObject.style.visibility = targetLayerObject.style.visibility == "hidden" ? "visible" : "hidden";
-    
-        // change button icon
-        event.target.src = targetLayerObject.style.visibility == "hidden" ? "images/view.svg" : "images/view--filled.svg";
-    }
-
     startDraw(event) {
         // console.log(this.history) // debug
         this.historyIdx++;
@@ -566,6 +551,48 @@ class LayerSystem {
 
     genLayerList() {
         let layerList = document.getElementById("layer-list");
+        layerList.innerHTML = ""; // clear layer list
+        for(let i = 0; i < this.layercount; i++) {
+            let layer = document.createElement("div");
+            layer.className = "layer-list-object container";
+            layer.id = `${i}-layer`;
+            layer.innerHTML = `<img src="images/view--filled.svg" onclick="event.stopPropagation();layerSystem.toggleVisible(event);"><span>layer${i}</span>`;
+            layerList.appendChild(layer);
+        }
+    }
+
+    createLayer() {
+        let layerId = this.layercount;
+        this.layercount++;
+        this.layers[layerId] = document.createElement("canvas");
+        this.layers[layerId].id = `${layerId}`
+        this.layers[layerId].className = "layer";
+        let paperRect = document.getElementById("paper").getBoundingClientRect();
+        this.layers[layerId].style.left = paperRect.left + "px";
+        this.layers[layerId].style.top = paperRect.top + "px";
+        this.layers[layerId].style.width = paperRect.width + "px";
+        this.layers[layerId].style.height = paperRect.height + "px";
+        this.layers[layerId].width = paperRect.width;
+        this.layers[layerId].height = paperRect.height;
+        this.layers[layerId].style.zIndex = 1 + layerId;
+        this.layers[layerId].style.visibility = "visible";
+
+        this.genLayerList();
+    }
+
+    toggleVisible(event) {
+        // get layer name from event target id
+        let targetLayer = event.target.parentElement.parentElement.id.split("-")[0];
+        //console.log("Toggling visibility of layer:", targetLayer); // debug
+    
+        // get layer object
+        let targetLayerObject = document.getElementById(targetLayer);
+    
+        // toggle visibility
+        targetLayerObject.style.visibility = targetLayerObject.style.visibility == "hidden" ? "visible" : "hidden";
+    
+        // change button icon
+        event.target.src = targetLayerObject.style.visibility == "hidden" ? "images/view.svg" : "images/view--filled.svg";
     }
 }
 
@@ -576,7 +603,7 @@ const layerSystem = new LayerSystem();
 function pageInit() {
     document.getElementById("paper").style.visibility = "visible";
     let rect = document.getElementById("color-picker").getBoundingClientRect();
-    canvas.setCanvas(document.getElementById("canvas-layer0"));
+    canvas.setCanvas(document.getElementById("0"));
 
     palette.setPickerIndicatorHolding(true);
     palette.pickerUpdate({ clientX: rect.right, clientY: rect.bottom });
