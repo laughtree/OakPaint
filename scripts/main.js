@@ -112,17 +112,21 @@ class Canvas {
         this.Y = 0;
         this.Opacity = 1;
         this.cursor = null;
+        this.listeningText = false;
+        this.text = null;
     }
 
     setCanvas(canvas) {
         this.canvas = canvas;
         this.ctx = canvas.getContext("2d");
-        this.setBrushSize(this.brushSize);
-        this.setColor(this.color);
-        this.brush = document.getElementById("brush");
-        this.cursor = document.getElementById("cursor");
         this.preview = document.getElementById("canvas-preview");
         this.previewCtx = this.preview.getContext("2d");
+        this.brush = document.getElementById("brush");
+        this.cursor = document.getElementById("cursor");
+        this.setBrushSize(this.brushSize);
+        this.setColor(this.color);
+        this.ctx.font = "20px Arial";
+        this.ctx.textAlign = "left";
     }
 
     setColor(color) {
@@ -148,6 +152,8 @@ class Canvas {
         this.brushSize = size;
         this.ctx.lineWidth = size;
         // console.log("Canvas brush size set to:", this.brushSize); // debug
+        this.ctx.font = size + "px Arial";
+        this.previewCtx.font = size + "px Arial";
     }
 
     setOpacity(opacity) {
@@ -165,6 +171,10 @@ class Canvas {
         this.tool = tool;
 
         this.cursor.children[0].src = "images/" + tool + ".svg";
+
+        this.listeningText = false;
+        this.text = "";
+        this.previewCtx.clearRect(0, 0, this.preview.width, this.preview.height);
     }
 
     toggleVisible(event) {
@@ -191,6 +201,10 @@ class Canvas {
         this.Y = this.startY;
         this.ctx.moveTo(this.startX, this.startY);
         // console.log("Start drawing at:", this.startX, this.startY); // debug
+        if(this.tool == "text") {
+            this.text = "";
+            this.listeningText = true;
+        }
     }
     
     stopDraw(event) {
@@ -210,6 +224,35 @@ class Canvas {
         // console.log("Stop drawing at:", this.X, this.Y); // debug
     }
 
+    textInput(event) {
+        if(!this.listeningText) return;
+        switch(event.key) {
+            case "Enter":
+                if(this.text.length > 0) {
+                    this.listeningText = false;
+                    this.ctx.fillText(this.text, this.X, this.Y);
+                    this.previewCtx.clearRect(0, 0, this.preview.width, this.preview.height);
+                }
+                break;
+            case "Backspace":
+                if(this.text.length > 0) {
+                    this.text = this.text.substring(0, this.text.length - 1);
+                    this.previewCtx.clearRect(0, 0, this.preview.width, this.preview.height);
+                    this.previewCtx.fillText(this.text, this.X, this.Y);
+                }
+                break;
+            case "Escape":
+                this.listeningText = false;
+                this.previewCtx.clearRect(0, 0, this.preview.width, this.preview.height);
+                break;
+            default:
+                this.text += event.key;
+                this.previewCtx.clearRect(0, 0, this.preview.width, this.preview.height);
+                this.previewCtx.fillText(this.text, this.X, this.Y);
+            break;
+        }
+    }
+
     showBrush() {
         this.brush.style.display = "block";
         this.cursor.style.display = "block";
@@ -222,10 +265,22 @@ class Canvas {
 
     updateBrush(event) {
         this.showBrush();
-        this.brush.style.left = event.clientX - this.brushSize / 2 + "px";
-        this.brush.style.top = event.clientY - this.brushSize / 2 + "px";
-        this.brush.style.width = this.brushSize + "px";
-        this.brush.style.height = this.brushSize + "px";
+        if(this.tool != "text") {
+            this.brush.style.left = event.clientX - this.brushSize / 2 + "px";
+            this.brush.style.top = event.clientY - this.brushSize / 2 + "px";
+            this.brush.style.width = this.brushSize + "px";
+            this.brush.style.height = this.brushSize + "px";
+            this.brush.style.backgroundColor = "transparent";
+            this.brush.style.borderRadius = "50%";
+        }
+        else {
+            this.brush.style.left = event.clientX - 1 + "px";
+            this.brush.style.top = event.clientY - this.brushSize / 2 + "px";
+            this.brush.style.width = 2 + "px";
+            this.brush.style.height = this.brushSize + "px";
+            this.brush.style.backgroundColor = this.color;
+            this.brush.style.borderRadius = "0%";
+        }
 
         this.cursor.style.left = event.clientX + this.brushSize + "px";
         this.cursor.style.top = event.clientY - 2 * this.brushSize + "px";
@@ -312,6 +367,8 @@ class Canvas {
                     this.previewCtx.moveTo(this.X, this.startY);
                     this.previewCtx.lineTo(this.startX, this.startY);
                     this.previewCtx.stroke();
+                    break;
+                case "text":
                     break;
                 default:
                     console.error("Unknown tool:", tool);

@@ -5,7 +5,7 @@
         <link rel="stylesheet" type="text/css" href="styles/index.css">
         <script src="scripts/main.js"></script>
     </head>
-    <body onload="pageInit();" onmouseup="event.stopPropagation();palette.setRingIndicatorHolding(false);palette.setPickerIndicatorHolding(false);canvas.stopDraw(event);">
+    <body onload="pageInit();" onmouseup="event.stopPropagation();palette.setRingIndicatorHolding(false);palette.setPickerIndicatorHolding(false);canvas.stopDraw(event);" onkeypress="event.stopPropagation();canvas.textInput(event);">
         <div class="container" id="background">
         <div class="container" id="workspace" onmouseup="event.stopPropagation();palette.setRingIndicatorHolding(false);palette.setPickerIndicatorHolding(false);canvas.stopDraw(event);" onmousemove="event.stopPropagation();" onmouseleave="event.stopPropagation();canvas.hideBrush();" draggable="false">
             <div class="container" id="views">
@@ -67,6 +67,9 @@
                     </div>
                     <div class="tool">
                         <img src="images/triangle.svg" alt="triangle" id="triangle" onclick="event.stopPropagation();canvas.setTool('triangle');">
+                    </div>
+                    <div class="tool">
+                        <img src="images/text.svg" alt="text" id="text" onclick="event.stopPropagation();canvas.setTool('text');">
                     </div>
                 </div>
                 <div class="container" id="tool-setting">
