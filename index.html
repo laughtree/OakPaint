@@ -13,10 +13,7 @@
             </div>
             <div class="container" id="board" onmousedown="event.stopPropagation();canvas.startDraw(event);" onmouseup="canvas.stopDraw(event);" onmousemove="event.stopPropagation();canvas.draw(event);canvas.updateBrush(event);" draggable="false" onmouseenter="event.stopPropagation();canvas.showBrush();" onmouseleave="canvas.hideBrush()" onmouseout="event.stopPropagation();canvas.hideBrush();">
                 <canvas id="paper"></canvas>
-                <canvas class="layer" id="0" draggable="false"></canvas>
-                <div class="container" id="layers">
-
-                </div>
+                <!-- <canvas class="layer" id="0" draggable="false"></canvas> -->
                 <canvas class="layer" id="canvas-preview" draggable="false"></canvas>
                 <canvas class="" id="brush" draggable="false"></canvas>
                 <div id="cursor"><img id="cursor-icon" src="images/pen.svg" alt="cursor" draggable="false"></div>
@@ -79,11 +76,15 @@
                 </div>
                 <div class="container" id="tool-setting">
                     <div class="container" id="brush-size">
-                        <div class="container" id="brush-size-indicator"></div>
+                        <div class="container" id="brush-size-txt" style="width: 10vh;">
+                            <span>Brush Size</span>
+                        </div>
                         <input type="range" id="brush-size-range" min="1" max="100" value="5" oninput="event.stopPropagation();canvas.setBrushSize(value);">
                     </div>
                     <div class="container" id="opacity">
-                        <div class="container" id="opacity-indicator"></div>
+                        <div class="container" id="opacity-txt" style="width: 10vh;">
+                            <span>Opacity</span>
+                        </div>
                         <input type="range" id="opacity-range" min="0" max="100" value="100" oninput="event.stopPropagation();canvas.setOpacity(value / 100);">
                     </div>
                 </div>
@@ -94,11 +95,14 @@
                     <div class="container layer-name"><span>Paper</span></div>
                 </div>
                 <div class="container" id="layer-list">
-                    <div class="layer-list-object container" id="0-layer">
+                    <!-- <div class="layer-list-object container" id="0-layer">
                         <div class="visible-button">
                             <img src="images/view--filled.svg" alt="visible" onclick="event.stopPropagation();layerSystem.toggleVisible(event);">
                         </div>
-                        <div class="container layer-name"><span>Layer 0</span></div>
+                        <div class="container layer-name"><span>Layer 0</span></div> -->
+                </div>
+                <div class="container" id="add-layer" onclick="event.stopPropagation();layerSystem.addLayer();">
+                    <img src="images/add.svg" alt="add-layer" id="add-layer-button" onclick="event.stopPropagation();layerSystem.createLayer();">
                 </div>
             </div>
         </div>

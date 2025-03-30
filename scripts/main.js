@@ -512,30 +512,56 @@ class Canvas {
         this.history = [];
         this.historyIdx = 0;
         this.history[this.historyIdx++] = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+
+        layerSystem.layers.forEach((layer) => {
+            tempCanvas.width = layer.width;
+            tempCanvas.height = layer.height;
+            tempCtx = tempCanvas.getContext("2d");
+            tempCtx.clearRect(0, 0, layer.width, layer.height);
+            tempCtx.drawImage(layer, 0, 0);
+
+            layer.style.left = paper.getBoundingClientRect().left + "px";
+            layer.style.top = paper.getBoundingClientRect().top + "px";
+            layer.style.width = paper.getBoundingClientRect().width + "px";
+            layer.style.height = paper.getBoundingClientRect().height + "px";
+            layer.width = paper.getBoundingClientRect().width;
+            layer.height = paper.getBoundingClientRect().height;
+
+            layer.getContext("2d").drawImage(tempCanvas, 0, 0);
+        });
     }
 
     download() {
         let url;
         let paper = document.getElementById("paper");
+        paper.width = this.canvas.width;
+        paper.height = this.canvas.height;
+        let paperCtx = paper.getContext("2d");
+        let tmp = document.createElement("canvas");
+        tmp.width = this.canvas.width;
+        tmp.height = this.canvas.height;
+        let tmpCtx = tmp.getContext("2d");
 
-        
         if(paper.style.visibility == "visible") {
-            let paperCtx = paper.getContext("2d");
-            paper.width = this.canvas.width;
-            paper.height = this.canvas.height;
             paperCtx.fillStyle = "white";
             paperCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-            paperCtx.drawImage(this.canvas, 0, 0);
-            url = paper.toDataURL("image/png", 1.0);
+            tmpCtx.drawImage(paper, 0, 0);
         }
-        else {
-            url = this.canvas.toDataURL("image/png", 1.0);
-        }
+
+        layerSystem.layers.forEach((layer) => {
+            if(layer.style.visibility == "visible")
+                tmpCtx.drawImage(layer, 0, 0);
+        });
+    
+        url = tmp.toDataURL("image/png", 1.0);
+
         let dummy = document.createElement("a");
         dummy.href = url;
         dummy.download = "canvas.png";
         dummy.click();
         dummy.remove();
+
+        tmp.remove();
     }
 
     test() {
@@ -556,7 +582,36 @@ class LayerSystem {
             let layer = document.createElement("div");
             layer.className = "layer-list-object container";
             layer.id = `${i}-layer`;
-            layer.innerHTML = `<img src="images/view--filled.svg" onclick="event.stopPropagation();layerSystem.toggleVisible(event);"><span>layer${i}</span>`;
+
+            let img = document.createElement("img");
+            img.src = "images/view--filled.svg";
+            img.alt = "visibility";
+            img.onclick = (event) => {
+                event.stopPropagation();
+                layerSystem.toggleVisible(event);
+            };
+
+            let btndiv = document.createElement("div");
+            btndiv.className = "visible-button";
+            btndiv.appendChild(img);
+            layer.appendChild(btndiv);
+
+            let nameDiv = document.createElement("div");
+            nameDiv.className = "container layer-name";
+            nameDiv.innerHTML = `<span>layer${i}</span>`;
+            layer.appendChild(nameDiv);
+
+            layer.onclick = (event) => {
+                // console.log("switch to layer: ", event.target.id); // debug
+                event.stopPropagation();
+                let targetLayer = event.target.parentElement.id.split("-")[0];
+                canvas.setCanvas(document.getElementById(targetLayer));
+                this.genLayerList();
+            }
+            layer.style.cursor = "pointer";
+            if(canvas.canvas) 
+                layer.style.backgroundColor = canvas.canvas.id == `${i}` ? "#795548" : "#A98274"
+
             layerList.appendChild(layer);
         }
     }
@@ -576,6 +631,8 @@ class LayerSystem {
         this.layers[layerId].height = paperRect.height;
         this.layers[layerId].style.zIndex = 1 + layerId;
         this.layers[layerId].style.visibility = "visible";
+
+        document.getElementById("board").appendChild(this.layers[layerId]);
 
         this.genLayerList();
     }
@@ -602,8 +659,11 @@ const layerSystem = new LayerSystem();
 
 function pageInit() {
     document.getElementById("paper").style.visibility = "visible";
+    layerSystem.createLayer();
+
     let rect = document.getElementById("color-picker").getBoundingClientRect();
     canvas.setCanvas(document.getElementById("0"));
+    layerSystem.genLayerList();
 
     palette.setPickerIndicatorHolding(true);
     palette.pickerUpdate({ clientX: rect.right, clientY: rect.bottom });

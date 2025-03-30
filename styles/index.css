@@ -212,6 +212,15 @@
     cursor: pointer;
 }
 
+#layer-list {
+    flex-direction: column;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 25vh;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
 .layer-list-object{
     width: 25vh;
     height: 5vh;
@@ -259,4 +268,37 @@
 
 #cursor {
     position: absolute;
+}
+
+#add-layer-button {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #795548;
+    z-index: 1;
+}
+
+#add-layer {
+    justify-content: center;
+    align-items: center;
+}
+
+#add-layer-button:hover{
+    cursor: pointer;
+    transform: scale(1.1);
+}
+
+#tool-setting {
+    flex-direction: column;
+    row-gap: 2vh;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+#canvas-preview {
+    z-index: 500;
 }
