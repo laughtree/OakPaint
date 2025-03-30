@@ -148,6 +148,10 @@ class Canvas {
         }
         this.ctx.strokeStyle = this.color;
         this.ctx.fillStyle = this.color;
+
+        this.previewCtx.strokeStyle = this.color;
+        this.previewCtx.fillStyle = this.color;
+
         console.log("Canvas color set to:", this.color); // debug
     }
 
@@ -238,6 +242,7 @@ class Canvas {
             if(this.text.length == 0) return;
             this.text = this.text.substring(0, this.text.length - 1);
             this.previewCtx.clearRect(0, 0, this.preview.width, this.preview.height);
+            this.previewCtx.fillStyle = this.color;
             this.previewCtx.fillText(this.text, this.X, this.Y);
             return;
         }
@@ -246,6 +251,7 @@ class Canvas {
                 if(this.text.length > 0) {
                     this.listeningText = false;
                     this.ctx.fillText(this.text, this.X, this.Y);
+                    this.previewCtx.fillStyle = this.color;
                     this.previewCtx.clearRect(0, 0, this.preview.width, this.preview.height);
                 }
                 break;
@@ -253,6 +259,7 @@ class Canvas {
                 if(this.text.length > 0) {
                     this.text = this.text.substring(0, this.text.length - 1);
                     this.previewCtx.clearRect(0, 0, this.preview.width, this.preview.height);
+                    this.previewCtx.fillStyle = this.color;
                     this.previewCtx.fillText(this.text, this.X, this.Y);
                 }
                 break;
@@ -263,6 +270,7 @@ class Canvas {
             default:
                 this.text += event.key;
                 this.previewCtx.clearRect(0, 0, this.preview.width, this.preview.height);
+                this.previewCtx.fillStyle = this.color;
                 this.previewCtx.fillText(this.text, this.X, this.Y);
             break;
         }
