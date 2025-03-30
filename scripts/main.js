@@ -226,6 +226,15 @@ class Canvas {
 
     textInput(event) {
         if(!this.listeningText) return;
+        // console.log("Text input:", event.key); // debug
+        if(event.keyCode == 8 || event.keyCode == 46) {
+            // console.log("Backspace/delete pressed"); // debug
+            if(this.text.length == 0) return;
+            this.text = this.text.substring(0, this.text.length - 1);
+            this.previewCtx.clearRect(0, 0, this.preview.width, this.preview.height);
+            this.previewCtx.fillText(this.text, this.X, this.Y);
+            return;
+        }
         switch(event.key) {
             case "Enter":
                 if(this.text.length > 0) {

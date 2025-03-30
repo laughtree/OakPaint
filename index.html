@@ -5,7 +5,7 @@
         <link rel="stylesheet" type="text/css" href="styles/index.css">
         <script src="scripts/main.js"></script>
     </head>
-    <body onload="pageInit();" onmouseup="event.stopPropagation();palette.setRingIndicatorHolding(false);palette.setPickerIndicatorHolding(false);canvas.stopDraw(event);" onkeypress="event.stopPropagation();canvas.textInput(event);">
+    <body onload="pageInit();" onmouseup="event.stopPropagation();palette.setRingIndicatorHolding(false);palette.setPickerIndicatorHolding(false);canvas.stopDraw(event);" onkeydown="event.stopPropagation();canvas.textInput(event);">
         <div class="container" id="background">
         <div class="container" id="workspace" onmouseup="event.stopPropagation();palette.setRingIndicatorHolding(false);palette.setPickerIndicatorHolding(false);canvas.stopDraw(event);" onmousemove="event.stopPropagation();" onmouseleave="event.stopPropagation();canvas.hideBrush();" draggable="false">
             <div class="container" id="views">
