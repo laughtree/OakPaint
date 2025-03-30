@@ -22,6 +22,7 @@
 | :----------------------- | :-------: | :-------: |
 | Visible Switch of Paper  |   1~5%    |     Y     |
 | Color History            |   1~5%    |     Y     |
+| Layer System             |   1~5%    |     Y     |
 
 
 ---
