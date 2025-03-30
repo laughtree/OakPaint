@@ -102,7 +102,7 @@ class Canvas {
         this.ctx = null;
         this.previewCtx = null;
         this.color = "hsl(0, 0%, 0%)";
-        this.brushSize = 5;
+        this.brushSize = 50;
         this.drawing = false;
         this.startX = 0;
         this.startY = 0;
@@ -149,7 +149,7 @@ class Canvas {
     }
 
     setBrushSize(size) {
-        this.brushSize = size;
+        this.brushSize = Number(size);
         this.ctx.lineWidth = size;
         // console.log("Canvas brush size set to:", this.brushSize); // debug
         this.ctx.font = size + "px Arial";
@@ -275,24 +275,25 @@ class Canvas {
     updateBrush(event) {
         this.showBrush();
         if(this.tool != "text") {
-            this.brush.style.left = event.clientX - this.brushSize / 2 + "px";
-            this.brush.style.top = event.clientY - this.brushSize / 2 + "px";
+            this.brush.style.left = (Number(event.clientX) - this.brushSize / 2) + "px";
+            this.brush.style.top = (Number(event.clientY) - this.brushSize / 2) + "px";
             this.brush.style.width = this.brushSize + "px";
             this.brush.style.height = this.brushSize + "px";
             this.brush.style.backgroundColor = "transparent";
             this.brush.style.borderRadius = "50%";
         }
         else {
-            this.brush.style.left = event.clientX - 1 + "px";
-            this.brush.style.top = event.clientY - this.brushSize / 2 + "px";
+            this.brush.style.left = (Number(event.clientX) - 1) + "px";
+            this.brush.style.top = (Number(event.clientY) - this.brushSize / 2) + "px";
             this.brush.style.width = 2 + "px";
             this.brush.style.height = this.brushSize + "px";
             this.brush.style.backgroundColor = this.color;
             this.brush.style.borderRadius = "0%";
         }
 
-        this.cursor.style.left = event.clientX + this.brushSize + "px";
-        this.cursor.style.top = event.clientY - 2 * this.brushSize + "px";
+        this.cursor.style.left = (Number(event.clientX) + this.brushSize) + "px";
+        this.cursor.style.top = (Number(event.clientY) - 2 * this.brushSize) + "px";
+        console.log(this.brushSize, event.clientX, (Number(event.clientX) + this.brushSize)); // debug
     }
 
     clear() {
@@ -440,7 +441,7 @@ function pageInit() {
     
     canvas.setTool("pen");
     canvas.setColor(palette.color);
-    canvas.setBrushSize(5);
+    canvas.setBrushSize(50);
     let paperRect = document.getElementById("paper").getBoundingClientRect();
     canvas.canvas.style.left = paperRect.left + "px";
     canvas.canvas.style.top = paperRect.top + "px";
