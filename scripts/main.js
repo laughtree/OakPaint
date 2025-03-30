@@ -118,6 +118,16 @@ class Canvas {
         this.historyIdx = 0;
     }
 
+    dropImage(event) {
+        console.log(event.dataTransfer.files); // debug
+        let source = new Image();
+        source.src = URL.createObjectURL(event.dataTransfer.files[0]);
+        source.onload = () => {
+            // console.log("source img size: ", source.width, source.height); // debug
+            this.ctx.drawImage(source, (Number(event.clientX) - Number(this.canvas.getBoundingClientRect().left) - source.width / 2), (Number(event.clientY) - Number(this.canvas.getBoundingClientRect().top) - source.height / 2));
+        }
+    }
+
     setCanvas(canvas) {
         this.canvas = canvas;
         this.ctx = canvas.getContext("2d");
@@ -152,7 +162,7 @@ class Canvas {
         this.previewCtx.strokeStyle = this.color;
         this.previewCtx.fillStyle = this.color;
 
-        console.log("Canvas color set to:", this.color); // debug
+        // console.log("Canvas color set to:", this.color); // debug
     }
 
     setBrushSize(size) {
@@ -456,7 +466,27 @@ class Canvas {
     }
 
     download() {
+        let url;
+        let paper = document.getElementById("paper");
 
+        
+        if(paper.style.visibility == "visible") {
+            let paperCtx = paper.getContext("2d");
+            paper.width = this.canvas.width;
+            paper.height = this.canvas.height;
+            paperCtx.fillStyle = "white";
+            paperCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            paperCtx.drawImage(this.canvas, 0, 0);
+            url = paper.toDataURL("image/png", 1.0);
+        }
+        else {
+            url = this.canvas.toDataURL("image/png", 1.0);
+        }
+        let dummy = document.createElement("a");
+        dummy.href = url;
+        dummy.download = "canvas.png";
+        dummy.click();
+        dummy.remove();
     }
 
     test() {
@@ -467,6 +497,7 @@ class Canvas {
 const palette = new Palette();
 const canvas = new Canvas();
 function pageInit() {
+    document.getElementById("paper").style.visibility = "visible";
     let rect = document.getElementById("color-picker").getBoundingClientRect();
     canvas.setCanvas(document.getElementById("canvas-layer0"));
 
@@ -491,6 +522,18 @@ function pageInit() {
     canvas.preview.height = paperRect.height;
     canvas.preview.style.width = paperRect.width + "px";
     canvas.preview.style.height = paperRect.height + "px";
+
+    document.getElementById("board").addEventListener("drop", (event)=>{
+        event.preventDefault();
+        canvas.dropImage(event);
+    });
+
+    document.getElementById("board").addEventListener("dragenter", (event)=>{
+        event.preventDefault();
+    });
+    document.getElementById("board").addEventListener("dragover", (event)=>{
+        event.preventDefault();
+    });
 
     window.addEventListener("resize", () => {
         canvas.resize();

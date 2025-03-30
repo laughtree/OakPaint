@@ -15,8 +15,8 @@
 | :--------------------- | :-------: | :-------: |
 | Different brush shapes |    15%    |     Y     |
 | Un/Re-do button        |    10%    |     Y     |
-| Image tool             |    5%     |     N     |
-| Download               |    5%     |     N     |
+| Image tool             |    5%     |     Y     |
+| Download               |    5%     |     Y     |
 
 | **Other useful widgets** | **Score** | **Check** |
 | :----------------------- | :-------: | :-------: |
