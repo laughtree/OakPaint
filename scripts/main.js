@@ -195,8 +195,8 @@ class Canvas {
     startDraw(event) {
         this.drawing = true;
         this.ctx.beginPath();
-        this.startX = event.clientX - this.canvas.getBoundingClientRect().left;
-        this.startY = event.clientY - this.canvas.getBoundingClientRect().top;
+        this.startX = Number(event.clientX) - this.canvas.getBoundingClientRect().left;
+        this.startY = Number(event.clientY) - this.canvas.getBoundingClientRect().top;
         this.X = this.startX;
         this.Y = this.startY;
         this.ctx.moveTo(this.startX, this.startY);
@@ -293,7 +293,7 @@ class Canvas {
 
         this.cursor.style.left = (Number(event.clientX) + this.brushSize) + "px";
         this.cursor.style.top = (Number(event.clientY) - 2 * this.brushSize) + "px";
-        console.log(this.brushSize, event.clientX, (Number(event.clientX) + this.brushSize)); // debug
+        // console.log(this.brushSize, event.clientX, (Number(event.clientX) + this.brushSize)); // debug
     }
 
     clear() {
@@ -308,8 +308,8 @@ class Canvas {
         try {
             this.lastX = this.X;
             this.lastY = this.Y;
-            this.X = event.clientX - this.canvas.getBoundingClientRect().left;
-            this.Y = event.clientY - this.canvas.getBoundingClientRect().top;
+            this.X = Number(event.clientX) - this.canvas.getBoundingClientRect().left;
+            this.Y = Number(event.clientY) - this.canvas.getBoundingClientRect().top;
             switch(this.tool) {
                 case "pen":
                     this.ctx.lineWidth = this.brushSize * 0.85;
