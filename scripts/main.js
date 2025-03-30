@@ -6,6 +6,7 @@ class Palette {
         this.H = 0;
         this.S = 0;
         this.L = 0;
+        this.history = [];
     }
 
     ringUpdate(event) {
@@ -28,7 +29,7 @@ class Palette {
         // console.log("Rotate the indicator to angle:", angle); // debug
 
         // update hue
-        this.H = this.getHueByAngle(angle);
+        this.H = Math.round(this.getHueByAngle(angle));
 
         // update color picker & color
         this.pickerUpdate(event);
@@ -71,13 +72,44 @@ class Palette {
         try {
             // change color to hsl format
             this.color = `hsl(${this.H}, ${this.S}%, ${this.L}%)`;
-            document.getElementById("picked-color").style.backgroundColor = this.color;
+            if(this.history.includes(this.color)) {
+                this.history.splice(this.history.indexOf(this.color), 1);
+            } // delete duplicate color in history
+            document.getElementById("picked-color").style.backgroundColor = this.color; // update color preview
+            this.genColorList(); // update color list
             // console.log("Picked color:", this.color); // debug
         }
         catch (error) {
             console.error("Error updating color:", error);
         }
         canvas.setColor(this.color);
+    }
+
+    setColor(color) {
+        // console.log("Set color to(by setColor()):", color); // debug
+        this.color = color;
+        // console.log("hi from setColor()"); // debug
+        this.setPaletteByColor();
+    }
+
+    setPaletteByColor() {
+        let hsl = this.color.includes("hsla") ? this.color.substring(5, this.color.length - 1) : this.color.substring(4, this.color.length - 1);
+        console.log(this.color); // debug
+        hsl = hsl.split(", ");
+        console.log(hsl); // debug
+        hsl.forEach((value, index) => {
+            if(index == 0) this.H = Number(value.replace("%", ""));
+            else if(index == 1) this.S = Number(value.replace("%", ""));
+            else if(index == 2) this.L = Number(value.replace("%", ""));
+        });
+        document.getElementById("color-ring-indicator").style.transform = `rotate(${this.getAngleByHue(this.H)}deg)`;
+        document.getElementById("color-picker").style = `background:  -webkit-linear-gradient(270deg, white 0%, black 100%), -webkit-linear-gradient(0deg, white 0%, hsl(${this.H}, 100%, 50%) 100%);`;
+        let rect = document.getElementById("color-picker").getBoundingClientRect();
+        let x = this.S / 100 * rect.width;
+        let y = (this.L / 50  / (2 - x / rect.width) - 1) * rect.height;
+        document.getElementById("color-picker-indicator").style = `left: ${Math.max(0, Math.min(rect.width, x)) - 5}px; top: ${Math.max(0, Math.min(rect.height, y)) - 5}px;`;
+        // console.log("hi from setPaletteByColor()"); // debug
+        this.updateColor();
     }
 
     setRingIndicatorHolding(value) {
@@ -90,6 +122,30 @@ class Palette {
 
     getHueByAngle(angle) {
         return angle % 360;
+    }
+
+    getAngleByHue(hue) {
+        return hue - 90;
+    }
+
+    genColorList() {
+        document.getElementById("color-list").innerHTML = ""; // clear color list
+        for(let i = 0; i < this.history.length; i++) {
+            let color = document.createElement("div");
+            color.className = "color-chart";
+            color.id = "color-" + i;
+            color.style.backgroundColor = this.history[i];
+            color.addEventListener("click", (event) => {
+                event.preventDefault();
+                let id = event.target.id.split("-")[1];
+                // console.log(`Set color to history:${id}`, palette.history[id + 1]);
+                let targetColor = palette.history[id]
+                palette.setColor(targetColor);
+                 // debug
+            });
+            document.getElementById("color-list").appendChild(color);
+        }
+        // console.log("hi from genColorList()"); // debug
     }
 }
 
@@ -224,6 +280,14 @@ class Canvas {
             this.text = "";
             this.listeningText = true;
         }
+
+        if(palette.history.length >= 3) {
+            palette.history.pop();
+        }
+        if(!palette.history.includes(this.color))
+            palette.history = [this.color].concat(palette.history);
+        palette.genColorList();
+        // console.log("Palette history: ", palette.history); // debug
     }
     
     stopDraw(event) {
@@ -494,8 +558,21 @@ class Canvas {
     }
 }
 
+class LayerSystem {
+    constructor() {
+        this.layers = [];
+        this.layercount = 0;
+    }
+
+    genLayerList() {
+        let layerList = document.getElementById("layer-list");
+    }
+}
+
 const palette = new Palette();
 const canvas = new Canvas();
+const layerSystem = new LayerSystem();
+
 function pageInit() {
     document.getElementById("paper").style.visibility = "visible";
     let rect = document.getElementById("color-picker").getBoundingClientRect();

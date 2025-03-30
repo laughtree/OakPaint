@@ -180,7 +180,7 @@
     align-self: center;
 }
 
-#picked-color {
+.color-chart {
     height: 5vh;
     width: 5vh;
     background-color: transparent;
