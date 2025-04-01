@@ -196,6 +196,9 @@ class Canvas {
         this.ctx.font = "20px Arial";
         this.ctx.textAlign = "left";
         this.history[this.historyIdx++] = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+
+        this.previewCtx.lineCap = "round";
+        this.previewCtx.lineJoin = "round";
     }
 
     setColor(color) {
