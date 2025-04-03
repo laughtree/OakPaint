@@ -64,6 +64,7 @@
         Just drag a image into the canvas area from your file explorer, and it will appear in the canvas with your mouse position as center.
 
     * Refresh
+        ![alt text](image-8.png)
         Just click the button, and it will clear the content of "currently selected layer"(this is controlled by my bonus function, layer system, if you haven't done any thing by that, its effect must be the same as clear the whole canvas)
     
 
