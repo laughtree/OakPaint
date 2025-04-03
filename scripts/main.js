@@ -269,11 +269,13 @@ class Canvas {
             this.listeningText = true;
         }
 
-        if(palette.history.length >= 3) {
-            palette.history.pop();
-        }
         if(!palette.history.includes(this.color))
             palette.history = [this.color].concat(palette.history);
+
+        if(palette.history.length > 3) {
+            palette.history.pop();
+        }
+
         palette.genColorList();
         // console.log("Palette history: ", palette.history); // debug
     }
