@@ -28,28 +28,29 @@
 
 ### How to use 
 The whole website looks like this.
-    ![web](image.png)
+![web](image.png)
 #### Palette
 ![palette](image-1.png)    
-        The color system is HSL.
-        You can control the hue by outer ring and control saturation and lightness, just click and drag indicator on them.(it sometime stucked because of the not draggable event of the browser triggered, just release your mouse and click again then.)
-        And the color you picked will displayed in the block below.
+The color system is HSL.
+You can control the hue by outer ring and control saturation and lightness, just click and drag indicator on them.(it sometime stucked because of the not draggable event of the browser triggered, just release your mouse and click again then.)
+And the color you picked will displayed in the block below.
 #### Tools
 ![tools](image-2.png)
 Just click at the tool icon to select tool to use.
 Selected tool will be highlighted.
-    ![alt text](image-3.png)
-    As the text says, this two sliders are each used to control size and opacity of the tool.
-    The brush size controls line width of pen and geometric tools, and size of text tools at the same time.
-    * Pen
-        Just a pen, draw by holding and moving your mouse around in the canvas area.
-    * Eraser
-        Just a eraser, erase by holding and moving your mouse around in the canvas area.
-    * Rectangle / Ellipse / Triangle
-        Just geometric shapes, control the diagonal by holding and moving your mouse in the canvas area after click down, and the shape will be drawn when mouse released.
-    * Text
-        Click in the canvas area will set the left align point of text, and it will start listening your keyboard input, just type and the content will shows up, also you can delete things you typed wrong before you comfirmed it by pressing ENTER, or just abandon the whole content you inputed this time by escape typing mode by pressing ESC.
-        You need to press ENTER to comfire your input, or once you use other tool or click other position, the input this time will be seen as abandond just like you pressed ESC
+##### tool control
+![alt text](image-3.png)
+As the text says, this two sliders are each used to control size and opacity of the tool.
+The brush size controls line width of pen and geometric tools, and size of text tools at the same time.
+##### Pen
+Just a pen, draw by holding and moving your mouse around in the canvas area.
+##### Eraser
+Just a eraser, erase by holding and moving your mouse around in the canvas area.
+##### Rectangle / Ellipse / Triangle
+Just geometric shapes, control the diagonal by holding and moving your mouse in the canvas area after click down, and the shape will be drawn when mouse released.
+##### Text
+Click in the canvas area will set the left align point of text, and it will start listening your keyboard input, just type and the content will shows up, also you can delete things you typed wrong before you comfirmed it by pressing ENTER, or just abandon the whole content you inputed this time by escape typing mode by pressing ESC.
+You need to press ENTER to comfire your input, or once you use other tool or click other position, the input this time will be seen as abandond just like you pressed ESC
 #### Undo/Redo
 ![reundo](image-6.png)
 Just click the button, the left one is UNDO, and the right one is REDO, and it will resume the corresponding state of canvas.
