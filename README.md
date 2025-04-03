@@ -28,15 +28,14 @@
 
 ### How to use 
 The whole website looks like this.
-    ![palette](image.png)
-    * Palette
-        ![alt text](image-1.png)
+    ![web](image.png)
+![palette](image-1.png)    
+* Palette
         The color system is HSL.
         You can control the hue by outer ring and control saturation and lightness, just click and drag indicator on them.(it sometime stucked because of the not draggable event of the browser triggered, just release your mouse and click again then.)
         And the color you picked will displayed in the block below.
-
+![tools](image-2.png)
 * Tools
-        ![tools](image-2.png)
         Just click at the tool icon to select tool to use.
         Selected tool will be highlighted.
         ![alt text](image-3.png)
@@ -51,31 +50,28 @@ The whole website looks like this.
         * Text
             Click in the canvas area will set the left align point of text, and it will start listening your keyboard input, just type and the content will shows up, also you can delete things you typed wrong before you comfirmed it by pressing ENTER, or just abandon the whole content you inputed this time by escape typing mode by pressing ESC.
             You need to press ENTER to comfire your input, or once you use other tool or click other position, the input this time will be seen as abandond just like you pressed ESC
-
+![reundo](image-6.png)
     * Redo/Undo
-        ![reundo](image-6.png)
         Just click the button, the left one is UNDO, and the right one is REDO, and it will resume the corresponding state of canvas.
-
+![alt text](image-7.png) 
     * Download Image
-        ![alt text](image-7.png) 
         Just click the button, then it will turns the currently "displayed"(this is controlled by my bonus function, layer system, if you haven't done any thing by that, its effect must be the same as download the whole canvas as a pn file) canvas into a png image and download it.
     
     * Upload Image
         Just drag a image into the canvas area from your file explorer, and it will appear in the canvas with your mouse position as center.
-
+![alt text](image-8.png)
     * Refresh
-        ![alt text](image-8.png)
         Just click the button, and it will clear the content of "currently selected layer"(this is controlled by my bonus function, layer system, if you haven't done any thing by that, its effect must be the same as clear the whole canvas)
     
 
 ### Bonus Function description
-* Color history, I think no one is a human outlook color calibrator here
-        ![alt text](image-5.png)
+![alt text](image-5.png)
+* Color history, I think no one is a human outlook color calibrator here        
         Last three color you used will be stored beside the picked color, you can reuse them just by clicking on them to set the picked color back.
         A color already in the history won't be stored again.
-
+  
+![layers](image-4.png)
 * Layer system, a really necessary function for a painting app.
-        ![layers](image-4.png)
         You can create new layer by click the add button below.
         Switch between them is by clicking at them in the list, and the currently selected layer will have different background color in the list to make it identifiable.
         All changes you make on the canvas area is to "the layer", including undo, redo and clear.
