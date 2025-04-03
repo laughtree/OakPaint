@@ -27,7 +27,7 @@
 ---
 
 ### How to use 
-    The whole website looks like this.
+The whole website looks like this.
     ![palette](image.png)
     * Palette
         ![alt text](image-1.png)
@@ -35,7 +35,7 @@
         You can control the hue by outer ring and control saturation and lightness, just click and drag indicator on them.(it sometime stucked because of the not draggable event of the browser triggered, just release your mouse and click again then.)
         And the color you picked will displayed in the block below.
 
-    * Tools
+* Tools
         ![tools](image-2.png)
         Just click at the tool icon to select tool to use.
         Selected tool will be highlighted.
@@ -69,12 +69,12 @@
     
 
 ### Bonus Function description
-    * Color history, I think no one is a human outlook color calibrator here
+* Color history, I think no one is a human outlook color calibrator here
         ![alt text](image-5.png)
         Last three color you used will be stored beside the picked color, you can reuse them just by clicking on them to set the picked color back.
         A color already in the history won't be stored again.
 
-    * Layer system, a really necessary function for a painting app.
+* Layer system, a really necessary function for a painting app.
         ![layers](image-4.png)
         You can create new layer by click the add button below.
         Switch between them is by clicking at them in the list, and the currently selected layer will have different background color in the list to make it identifiable.
@@ -87,11 +87,11 @@
 
 ### Web page link
 
-    Oak Paint[https://oakpaint.web.app/]
+Oak Paint[https://oakpaint.web.app/]
 
 ### Others (Optional)
 
-    Please don't order a fried rice in the bar.
+Please don't order a fried rice in the bar.
 
 <style>
 table th{
