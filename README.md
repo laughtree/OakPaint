@@ -27,6 +27,7 @@
 ---
 
 ### How to use 
+
     The whole website looks like this.
     ![palette](image.png)
     * Palette
